@@ -15,7 +15,7 @@ PORT = 6001
 if len(sys.argv) < 4:
     sys.exit("Usage: client.py ip puerto linea")
 
-Line = ' '.join(sys.argv[3:])
+Line = ' '.join(sys.argv[2:])
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
