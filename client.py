@@ -16,6 +16,8 @@ except IndexError or ValueError:
 
 if sys.argv[3] == 'REGISTER':
     Line = ('REGISTER' + ' sip:' + USER + ' SIP/2.0\\r\\n\\r\\n')
+else :
+    Line = sys.argv[3]
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
