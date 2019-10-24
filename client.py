@@ -6,16 +6,16 @@ import sys
 import socket
 
 # Constantes. Dirección IP del servidor y contenido a enviar
-SERVER = 'localhost'
-PORT = 6001
+try:
+    SERVER = sys.argv[1]
+    PORT = int(sys.argv[2])
+    USER = sys.argv[4]
+except IndexError or ValueError:
+    sys.exit('Usage: python3 client.py server port REGISTER user')
 
 
-#Leemos los argumentos desde la shell
-
-if len(sys.argv) < 4:
-    sys.exit("Usage: client.py ip puerto linea")
-
-Line = ' '.join(sys.argv[2:])
+if sys.argv[3] == 'REGISTER':
+    Line = ('REGISTER' + ' sip:' + USER + ' SIP/2.0\\r\\n\\r\\n')
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
