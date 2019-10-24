@@ -11,17 +11,32 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
     Echo server class
     """
+    dict_users = {}
+
+    def add_user(self, user):
+        """Add users to the dictionary."""
+        IP_client, Port_client = self.client_address
+        self.dict_users[user] = IP_client
+        print(self.dict_users)
 
     def handle(self):
         """
         handle method of the server class
         (all requests will be handled by this method)
         """
-        IP_client, Puerto_client = self.client_address
         for line in self.rfile:
-            print('El cliente con IP nos manda: ', line.decode('utf-8'))
-        self.wfile.write(b"SIP/2.0 200 OK\\r\\n\\r\\n")
+            print('El cliente nos manda: ', line.decode('utf-8'))
+        message_client = line.decode('utf-8')
+        message_client = ''.join(message_client).split()
+        if message_client[0] == 'REGISTER':
+            self.wfile.write(b"SIP/2.0 200 OK\\r\\n\\r\\n")
+            user = message_client[1].split(':')[1]
+            self.add_user(user)
+
+        else:
+            self.wfile.write(b"SIP/2.0 400 error\\r\\n\\r\\n")
          # self.request is the TCP socket connected to the client
+
 
 
 if __name__ == "__main__":
