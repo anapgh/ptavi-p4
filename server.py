@@ -13,11 +13,11 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
     dict_users = {}
 
-    def add_user(self, user):
+    def add_user(self, sip_address):
         """Add users to the dictionary."""
         IP_client, Port_client = self.client_address
-        self.dict_users[user] = IP_client
-        print(self.dict_users)
+        self.dict_users[sip_address] = IP_client
+
 
     def handle(self):
         """
@@ -25,19 +25,20 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         (all requests will be handled by this method)
         """
         for line in self.rfile:
-            print('El cliente nos manda: ', line.decode('utf-8'))
-        message_client = line.decode('utf-8')
-        message_client = ''.join(message_client).split()
-        if message_client[0] == 'REGISTER':
-            self.wfile.write(b"SIP/2.0 200 OK\\r\\n\\r\\n")
-            user = message_client[1].split(':')[1]
-            self.add_user(user)
-
-        else:
-            self.wfile.write(b"SIP/2.0 400 error\\r\\n\\r\\n")
-         # self.request is the TCP socket connected to the client
-
-
+            message_client = line.decode('utf-8')
+            if message_client != '\r\n':
+                print('El cliente nos manda: ', line.decode('utf-8'))
+                parametros_client = ''.join(message_client).split()
+                if parametros_client[0] == 'REGISTER':
+                    self.wfile.write(b"SIP/2.0 200 OK\r\n")
+                    sip_address = parametros_client[1].split(':')[1]
+                    self.add_user(sip_address)
+                elif parametros_client[0] == 'Expires:':
+                    print('EXPIRES')
+                else:
+                    self.wfile.write(b"SIP/2.0 400 error\r\n")
+             # self.request is the TCP socket connected to the client
+        print(self.dict_users)
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
