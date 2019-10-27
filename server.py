@@ -13,10 +13,20 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
     dict_users = {}
 
-    def add_user(self, sip_address):
+    def add_user(self, sip_address, expires_value):
         """Add users to the dictionary."""
         IP_client, Port_client = self.client_address
-        self.dict_users[sip_address] = IP_client
+        self.dict_users[sip_address] = IP_client + ' Expires: '\
+                                                 + str(expires_value)
+        self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
+
+    def delete_user(self, sip_address):
+        """Delete users to the dictionary."""
+        try:
+            del self.dict_users[sip_address]
+            self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
+        except KeyError:
+            self.wfile.write(b'SIP/2.0 404 User Not Found\r\n\r\n')
 
 
     def handle(self):
@@ -30,11 +40,13 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 print('El cliente nos manda: ', line.decode('utf-8'))
                 parametros_client = ''.join(message_client).split()
                 if parametros_client[0] == 'REGISTER':
-                    self.wfile.write(b"SIP/2.0 200 OK\r\n")
                     sip_address = parametros_client[1].split(':')[1]
-                    self.add_user(sip_address)
                 elif parametros_client[0] == 'Expires:':
-                    print('EXPIRES')
+                    expires_value = float(parametros_client[1])
+                    if expires_value == 0:
+                        self.delete_user(sip_address)
+                    elif expires_value > 0:
+                        self.add_user(sip_address, expires_value)
                 else:
                     self.wfile.write(b"SIP/2.0 400 error\r\n")
              # self.request is the TCP socket connected to the client
