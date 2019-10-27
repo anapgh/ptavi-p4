@@ -5,6 +5,8 @@ Clase (y programa principal) para un servidor de eco en UDP simple
 
 import socketserver
 import sys
+import json
+import time
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
@@ -28,6 +30,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         except KeyError:
             self.wfile.write(b'SIP/2.0 404 User Not Found\r\n\r\n')
 
+    def register2json(self):
+        print('')
 
     def handle(self):
         """
@@ -46,6 +50,9 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     if expires_value == 0:
                         self.delete_user(sip_address)
                     elif expires_value > 0:
+                        expires_value = expires_value + time.time()
+                        expires_value = time.strftime('%Y-%m-%d %H:%M:%S',
+                                                     time.gmtime(expires_value))
                         self.add_user(sip_address, expires_value)
                 else:
                     self.wfile.write(b"SIP/2.0 400 error\r\n")
