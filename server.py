@@ -20,24 +20,34 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         IP_client, Port_client = self.client_address
         self.dict_users[sip_address] = IP_client + ' Expires: '\
                                                  + str(expires_value)
+
         self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
 
     def delete_user(self, sip_address):
         """Delete users to the dictionary."""
         try:
             del self.dict_users[sip_address]
+
             self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
         except KeyError:
             self.wfile.write(b'SIP/2.0 404 User Not Found\r\n\r\n')
 
-    def register2json(self):
-        print('')
+    def expires_users(self):
+        users_list = list(self.dict_users)
+        for user in users_list:
+            expires_value = self.dict_users[user].split(': ')[1]
+            real_time = time.strftime('%Y-%m-%d %H:%M:%S',
+                                             time.gmtime(time.time()))
+            if expires_value < real_time:
+                del self.dict_users[user]
+
 
     def handle(self):
         """
         handle method of the server class
         (all requests will be handled by this method)
         """
+        self.expires_users()
         for line in self.rfile:
             message_client = line.decode('utf-8')
             if message_client != '\r\n':
@@ -54,10 +64,16 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                         expires_value = time.strftime('%Y-%m-%d %H:%M:%S',
                                                      time.gmtime(expires_value))
                         self.add_user(sip_address, expires_value)
+                        
                 else:
                     self.wfile.write(b"SIP/2.0 400 error\r\n")
              # self.request is the TCP socket connected to the client
         print(self.dict_users)
+
+        def register2json(self):
+
+            with open('registered.json', "w") as outfile:
+                json.dump(self.dict_users, outfile, indent=1)
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
