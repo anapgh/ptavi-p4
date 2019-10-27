@@ -64,7 +64,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                         expires_value = time.strftime('%Y-%m-%d %H:%M:%S',
                                                      time.gmtime(expires_value))
                         self.add_user(sip_address, expires_value)
-                        
+
                 else:
                     self.wfile.write(b"SIP/2.0 400 error\r\n")
              # self.request is the TCP socket connected to the client
@@ -73,7 +73,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         def register2json(self):
 
             with open('registered.json', "w") as outfile:
-                json.dump(self.dict_users, outfile, indent=1)
+                json.dump(self.dict_users, json_file, indent=1)
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
