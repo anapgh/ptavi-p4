@@ -5,8 +5,8 @@ Clase (y programa principal) para un servidor de eco en UDP simple
 
 import socketserver
 import sys
-import json
 import time
+import json
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
@@ -33,6 +33,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             self.wfile.write(b'SIP/2.0 404 User Not Found\r\n\r\n')
 
     def expires_users(self):
+        """Check if the users have expired, delete them of the dictionary."""
         users_list = list(self.dict_users)
         for user in users_list:
             expires_value = self.dict_users[user].split(': ')[1]
@@ -41,6 +42,10 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             if expires_value < real_time:
                 del self.dict_users[user]
 
+    def register2json(self):
+        """Create a .json file"""
+        with open('registered.json', "w") as json_file:
+            json.dump(self.dict_users, json_file, indent=1)
 
     def handle(self):
         """
@@ -69,11 +74,9 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     self.wfile.write(b"SIP/2.0 400 error\r\n")
              # self.request is the TCP socket connected to the client
         print(self.dict_users)
+        self.register2json()
 
-        def register2json(self):
 
-            with open('registered.json', "w") as outfile:
-                json.dump(self.dict_users, json_file, indent=1)
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
