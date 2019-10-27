@@ -47,11 +47,20 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         with open('registered.json', "w") as json_file:
             json.dump(self.dict_users, json_file, indent=1)
 
+    def json2registered(self):
+        """if there is an .json file read from it"""
+        try:
+            with open('registered.json', 'r') as json_file:
+                self.dict_users = json.load(json_file)
+        except FileNotFoundError:
+            pass
+
     def handle(self):
         """
         handle method of the server class
         (all requests will be handled by this method)
         """
+        self.register2json()
         self.expires_users()
         for line in self.rfile:
             message_client = line.decode('utf-8')
