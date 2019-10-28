@@ -10,15 +10,15 @@ try:
     SERVER = sys.argv[1]
     PORT = int(sys.argv[2])
     USER = sys.argv[4]
-    EXPIRES_VALUE = sys.argv[5]
-except IndexError or ValueError:
-    sys.exit('Usage: python3 client.py localhost port REGISTER sip_address expires_value ')
+    EXPIRES_VALUE = int(sys.argv[5])
+except (IndexError, ValueError):
+    sys.exit('Usage: client.py ip port REGISTER sip_address expires_value ')
 
 
 if sys.argv[3] == 'REGISTER':
-    Lines = ('REGISTER' + ' sip:' + USER + ' SIP/2.0\r\n' +
-            'Expires: ' + str(EXPIRES_VALUE))
-else :
+    Lines = ('REGISTER' + ' sip:' + USER + ' SIP/2.0\r\n')
+    Lines = (Lines + ' Expires: ' + str(EXPIRES_VALUE))
+else:
     Lines = sys.argv[3]
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
