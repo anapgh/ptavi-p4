@@ -28,7 +28,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             del self.dict_users[sip_address]
             self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
         except KeyError:
-            self.wfile.write(b'SIP/2.0 404 User Not Found\r\n\r\n')
+            self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
 
     def expires_users(self):
         """Check if the users have expired, delete them of the dictionary."""
@@ -36,7 +36,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         for user in users_list:
             expires_value = self.dict_users[user].split(': ')[1]
             real_time = time.strftime(
-                                    '%Y-%m-%d %H:%M:%S',
+                                    '%Y-%m-%d %H:%M:%S +0000',
                                     time.localtime(time.time()))
             if expires_value < real_time:
                 del self.dict_users[user]
@@ -79,7 +79,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     elif expires_value > 0:
                         expires_value = expires_value + time.time()
                         expires_value = time.strftime(
-                                                '%Y-%m-%d %H:%M:%S',
+                                                '%Y-%m-%d %H:%M:%S +0000',
                                                 time.localtime(expires_value))
                         self.add_user(sip_address, expires_value)
                 else:
