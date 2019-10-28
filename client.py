@@ -17,7 +17,7 @@ except (IndexError, ValueError):
 
 if sys.argv[3] == 'REGISTER':
     Lines = ('REGISTER' + ' sip:' + USER + ' SIP/2.0\r\n')
-    Lines = (Lines + ' Expires: ' + str(EXPIRES_VALUE))
+    Lines = (Lines + 'Expires: ' + str(EXPIRES_VALUE))
 else:
     Lines = sys.argv[3]
 
