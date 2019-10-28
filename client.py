@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""
-Programa cliente UDP que abre un socket a un servidor
-"""
+"""Programa cliente UDP que abre un socket a un servidor."""
+
 import sys
 import socket
 
