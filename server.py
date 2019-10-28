@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Clase (y programa principal) para un servidor de eco en UDP simple
-"""
+"""Clase (y programa principal) para un servidor de eco en UDP simple."""
 
 import socketserver
 import sys
@@ -10,13 +8,12 @@ import json
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
-    """
-    Echo server class
-    """
+    """Echo server class."""
+
     dict_users = {}
 
     def add_user(self, sip_address, expires_value):
-        """Add users to the dictionary. Sip address + ip + expires"""
+        """Add users to the dictionary. Sip address + ip + expires."""
         IP_client, Port_client = self.client_address
         self.dict_users[sip_address] = IP_client + ' Expires: '\
                                                  + str(expires_value)
@@ -42,12 +39,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 del self.dict_users[user]
 
     def register2json(self):
-        """Create a .json file"""
+        """Create a .json file."""
         with open('registered.json', "w") as json_file:
             json.dump(self.dict_users, json_file, indent=4)
 
     def json2registered(self):
-        """if there is an .json file read from it"""
+        """if there is an .json file read from it."""
         try:
             with open('registered.json', 'r') as json_file:
                 self.dict_users = json.load(json_file)
@@ -55,10 +52,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             pass
 
     def handle(self):
-        """
-        handle method of the server class
-        (all requests will be handled by this method)
-        """
+        """handle method of the server class."""
         self.json2registered()
         self.expires_users()
         for line in self.rfile:
