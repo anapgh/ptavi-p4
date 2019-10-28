@@ -37,7 +37,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             expires_value = self.dict_users[user].split(': ')[1]
             real_time = time.strftime(
                                     '%Y-%m-%d %H:%M:%S',
-                                    time.gmtime(time.time()))
+                                    time.localtime(time.time()))
             if expires_value < real_time:
                 del self.dict_users[user]
 
@@ -79,8 +79,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     elif expires_value > 0:
                         expires_value = expires_value + time.time()
                         expires_value = time.strftime(
-                                                    '%Y-%m-%d %H:%M:%S',
-                                                    time.gmtime(expires_value))
+                                                '%Y-%m-%d %H:%M:%S',
+                                                time.localtime(expires_value))
                         self.add_user(sip_address, expires_value)
                 else:
                     self.wfile.write(b"SIP/2.0 400 error\r\n")
